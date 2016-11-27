@@ -1,8 +1,35 @@
-var MongoClient = require('mongodb').MongoClient;
+var co = require('co');
 
-MongoClient.connect("mongodb://localhost:27017/DBLab", function(err, db) {
-	if(!err) {
-		console.log("We are connected");
+co(function*() {
+	'use strict';
+
+	var Mongorito = require('mongorito');
+	var Model = Mongorito.Model;
+
+	Mongorito.connect('localhost/DBLab');
+	
+	console.log('test');
+		
+
+	class Account extends Model {	
 	}
+
+	var account = new Account({
+		name: 'steam_god',
+		username: 'gaben',
+		email: 't@example.com',
+		phone: "8 800 555 35 35",
+		language: 'english',
+		owned_products: ['Half Life 3']
+	});
+
+	yield account.save();
+
+	var accounts = yield Account.all();
+	
+	console.log(accounts);
+	
+	Mongorito.disconnect();
 });
-console.log('test');
+
+
