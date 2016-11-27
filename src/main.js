@@ -1,6 +1,7 @@
+
 var co = require('co');
 
-co(function*() {
+ co(function*() {
 	'use strict';
 
 	var Mongorito = require('mongorito');
@@ -8,7 +9,7 @@ co(function*() {
 
 	Mongorito.connect('localhost/test');			
 
-	class Account extends Model {
+		class Account extends Model {
 		
 		configure () {
 			this.before('save', 'validate');
@@ -69,7 +70,12 @@ co(function*() {
 		language: 'english',
 		owned_products: ['Half Life 3']
 	});
-	yield accountbad.save();
+	try {
+		yield accountbad.save();
+	}
+	catch (e) {
+		
+	}
 
 	var product = new Product({
 		name: 'Skyrim',
@@ -100,8 +106,8 @@ co(function*() {
 	
 
 	var accounts = yield Account.all();
-	
 	//console.log(accounts);
+	console.log(accounts.get('owned_products'));
 	
 	Mongorito.disconnect();
 	process.exit();
