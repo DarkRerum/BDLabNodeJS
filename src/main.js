@@ -42,8 +42,22 @@ var co = require('co');
 	
 	class Order extends Model {
 	}
-	
-	var account = new Account({
+	var product = new Product({
+		name: 'Odsd',
+		price: [
+			{cur: "rur", value: 234},
+			{cur: "eur", value: 653} 
+		],
+		description: [
+			{lang: "english", text: "odsadsa description in English"},
+			{lang: "russian", text: "Описание одсаодсо на русском языке"}
+		]
+	});
+	yield product.save();
+	console.log(1);
+	Mongorito.disconnect();
+	process.exit();
+	/*var account = new Account({
 		name: 'steam_god',
 		username: 'gaben',
 		email: 't@example1.com',
@@ -91,7 +105,7 @@ var co = require('co');
 	});
 	
 	yield product.save();
-	
+	*/
 	/*var order = new Order({
 		owner: "steam_god",
 		items: [
@@ -105,12 +119,7 @@ var co = require('co');
 
 	
 
-	var accounts = yield Account.all();
-	//console.log(accounts);
-	console.log(accounts.get('owned_products'));
 	
-	Mongorito.disconnect();
-	process.exit();
 });
 
 
