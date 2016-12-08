@@ -1,14 +1,13 @@
 var mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/test');
 
-var Schema = mongoose.Schema;
+var models = require('models')(mongoose);
 
-var AccountSchema = new Schema({
-	name: String,
-	username: String,
-	email: String,
-	phone: String,
-	language: String,
-	owned_products: [ String ]
+var testAcc = new models.Accounts({
+	name: 'rerum',
+	username: 'Acinonyx',
+	email: 't@example.com',
+	phone: "8 800 555 35 35",
+	language: 'english',
+	owned_products: ['Fallout: New Vegas']
 });
-
