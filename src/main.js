@@ -1,7 +1,10 @@
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/test');
-var conn = mongoose.connection;
+
 var models = require('./models')(mongoose);
+
+mongoose.Promise = global.Promise;
+mongoose.connect('mongodb://localhost/test');
+
 
 var testAcc = new models.Accounts({
 	name: 'rerum',
@@ -11,5 +14,15 @@ var testAcc = new models.Accounts({
 	language: 'english',
 	owned_products: ['Fallout: New Vegas']
 });
-conn.collection('accounts').insert(testAcc);
+
+testAcc.save(function (err) {
+  if (err) {
+		console.log("err");
+		return err;
+  }
+  else {
+  	console.log("saved");
+  }
+});
+
 process.exit();
