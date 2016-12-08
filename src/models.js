@@ -1,7 +1,10 @@
-/*var mongoose = require('mongoose');
-var Schema = mongoose.Schema;*/
+/*var mongoose = require('mongoose');*/
+
 
 module.exports = function(mongoose) {
+	var Schema = mongoose.Schema;
+	
+	
 	var Account = new Schema({
 		name: String,
 		username: String,

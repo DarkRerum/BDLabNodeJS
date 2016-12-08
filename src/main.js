@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/test');
 
-var models = require('models')(mongoose);
+var models = require('./models')(mongoose);
 
 var testAcc = new models.Accounts({
 	name: 'rerum',
@@ -11,3 +11,4 @@ var testAcc = new models.Accounts({
 	language: 'english',
 	owned_products: ['Fallout: New Vegas']
 });
+
