@@ -3,6 +3,8 @@ mongoose.connect('mongodb://localhost/test');
 
 var models = require('./models')(mongoose);
 
+mongoose.Promise = global.Promise;
+
 var testAcc = new models.Accounts({
 	name: 'rerum',
 	username: 'Acinonyx',
@@ -12,3 +14,7 @@ var testAcc = new models.Accounts({
 	owned_products: ['Fallout: New Vegas']
 });
 
+testAcc.save(function (err) {
+  if (err) return handleError(err);
+  // saved!
+})
