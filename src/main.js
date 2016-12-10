@@ -9,6 +9,25 @@ var Account = models.Accounts;
 var Product = models.Products;
 var Order = models.Orders;
 
+functions.removePriceData(models, 'Skyrim', 'eur'
+	, function(err, data) {
+		if (err) {console.log(err.errmsg)}
+		else {
+			console.log(data);
+		}
+	}
+);
+
+/*functions.addPriceData(models, 'Skyrim', 'eur', 88
+	, function(err, data) {
+		if (err) {console.log(err.errmsg)}
+		else {
+			console.log(data);
+		}
+	}
+);*/
+
+
 /*functions.unlockAchievement(models, 'rerum2', 'Fallout: New Vegas', 'finish'
 	, function(err, data) {
 		if (err) {console.log(err.errmsg)}
@@ -33,16 +52,26 @@ var Order = models.Orders;
 		}
 	}
 );*/
-functions.getOwnedProducts(models, 'rerum2'
+
+/*functions.getOwnedProducts(models, 'rerum2'
 	, function(err, data) {
 		if (err) {console.log(err.errmsg)}
 		else {
 			console.log(data);
 		}
 	}
-);
+);*/
 
-/*functions.getProductAchievements(models, 'Skyrim', 'russian'
+/*functions.addPriceData(models, 'Skyrim', 'cny', 55
+	, function(err, data) {
+		if (err) {console.log(err.errmsg)}
+		else {
+			console.log(data);
+		}
+	}
+);*/
+
+/*functions.getProductAchievements(models, 'Fallout: New Vegas', 'russian'
 	, function(err, names) {
 		if (err) {console.log(err.errmsg)}
 		else {
