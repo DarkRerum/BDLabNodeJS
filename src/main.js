@@ -9,6 +9,22 @@ var Account = models.Accounts;
 var Product = models.Products;
 var Order = models.Orders;
 
+/*functions.unlockAchievement(models, 'rerum2', 'Fallout: New Vegas', 'finish'
+	, function(err, data) {
+		if (err) {console.log(err.errmsg)}
+		else {
+			console.log(data);
+		}
+	}
+);*/
+/*functions.getAccountAchievement(models, 'rerum2', 'russian'
+	, function(err, data) {
+		if (err) {console.log(err.errmsg)}
+		else {
+			console.log(data);
+		}
+	}
+);*/
 /*functions.getAccountData(models, 'rerum2'
 	, function(err, data) {
 		if (err) {console.log(err.errmsg)}
@@ -17,7 +33,7 @@ var Order = models.Orders;
 		}
 	}
 );*/
-functions.getOwnedProducts(models, 'hiso'
+functions.getOwnedProducts(models, 'rerum2'
 	, function(err, data) {
 		if (err) {console.log(err.errmsg)}
 		else {
@@ -25,7 +41,6 @@ functions.getOwnedProducts(models, 'hiso'
 		}
 	}
 );
-
 
 /*functions.getProductAchievements(models, 'Skyrim', 'russian'
 	, function(err, names) {

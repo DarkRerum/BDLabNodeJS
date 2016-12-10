@@ -21,7 +21,13 @@ module.exports = function(mongoose) {
 			type: String,
 			default: 'english'
 		},
-		owned_products: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Products' }]
+		owned_products: [{
+			product: {
+				type: mongoose.Schema.Types.ObjectId, 
+				ref: 'Products' 
+			},
+			achievement_numbers: [Number]
+		}]
 	});
 	
 	

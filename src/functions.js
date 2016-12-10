@@ -72,7 +72,7 @@ module.exports.getAccountData = findAccount;
 
 module.exports.getOwnedProducts = function(models, accountName, callback) {
 	models.Accounts.findOne({name: accountName})
-	.populate('owned_products')
+	.populate('owned_products.product')
 	.exec(function (err, acc) {
 		if (err) {return callback(err, null)}
 		else {
@@ -83,7 +83,7 @@ module.exports.getOwnedProducts = function(models, accountName, callback) {
 			var names = [];
 			
 			for (var i = 0; i < acc.owned_products.length; i++) {
-				names[i] = acc.owned_products[i].name;
+				names[i] = acc.owned_products[i].product.name;
 			}
 			
 			if (names.length === 0) {
@@ -95,3 +95,92 @@ module.exports.getOwnedProducts = function(models, accountName, callback) {
 		}
 	});
 }
+
+
+module.exports.getAccountAchievement = function(models, accountName, language, callback) {
+	models.Accounts.findOne({name: accountName})
+	.populate('owned_products.product')
+	.exec(function (err, acc) {
+		if (err) {return callback(err, null)}
+		else {
+			if (acc === null) {
+				return callback({errmsg: 'There isn\'t such account'}, null);
+			}
+			
+			var names = [];
+			var idx = 0;
+			//return callback(null, acc.owned_products[0].product.achievements[0].translations[0].lang);
+			for (var i = 0; i < acc.owned_products.length; i++) {
+				var achievement_numbers = acc.owned_products[i].achievement_numbers;
+				for (var j = 0; j < acc.owned_products[i].product.achievements.length; j++) {
+					
+					if (achievement_numbers.indexOf(acc.owned_products[i].product.achievements[j].id) < 0) {
+						continue;
+					}
+					for (var k = 0; k < acc.owned_products[i].product.achievements[j].translations.length; k++) {
+						
+						if (acc.owned_products[i].product.achievements[j].translations[k].lang === language) {
+							
+							names[idx] = acc.owned_products[i].product.achievements[j].translations[k].name;
+							idx++;
+						}
+					}
+				}
+			}
+			
+			if (names.length === 0) {
+				return callback({errmsg: 'This account has no achievements in such language'}, null);
+			}
+			else {
+				return callback(null, names);
+			}
+		}
+	});
+}
+
+
+module.exports.unlockAchievement = function(models, accountName, productName, achName, callback) {
+	models.Accounts.findOne({name: accountName})
+	.populate('owned_products.product')
+	.exec(function (err, acc) {
+		if (err) {return callback(err, null)}
+		else {
+			if (acc === null) {
+				return callback({errmsg: 'There isn\'t such account'}, null);
+			}
+			var find = false;
+			for (var i = 0; i < acc.owned_products.length; i++) {
+				
+				if (acc.owned_products[i].product.name === productName) {
+					for (var j = 0; j < acc.owned_products[i].product.achievements.length; j++) {
+						
+						for (var k = 0; k < acc.owned_products[i].product.achievements[j].translations.length; k++) {
+							
+							if (acc.owned_products[i].product.achievements[j].translations[k].name === achName) {
+								find = true;
+								if (acc.owned_products[i].achievement_numbers.indexOf(j) > -1) {
+									return callback({errmsg: 'Achievement already unlocked'}, null);
+								}
+								else {
+									acc.owned_products[i].achievement_numbers.push(j);
+									models.Accounts.findByIdAndUpdate(acc._id, 
+										{ $set: { owned_products: acc.owned_products }}
+										, function (err, data) {
+									  if (err) {return callback(err, null)}
+									  return callback(null, "unlocked");
+									});
+								}
+							}
+						}
+					}
+				}
+			}
+			if (!find) {
+				return callback({errmsg: 'No such achievement'}, null);
+			}
+		}
+	});
+}
+
+
+module.exports.addNewAccount = function() {}
