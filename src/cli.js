@@ -40,11 +40,11 @@ vorpal
 	
 	functions.getOwnedProducts(models, args.accountname
 	, function(err, data) {
-		if (err) {console.log(err.errmsg)}
+		if (err) {vorpal.log(err.errmsg)}
 		else {
 			for (var i in data) {
-				vorpal.log(i);
-			}
+				vorpal.log(data[i]);
+			}			
 		}
 	}
 	);
@@ -74,14 +74,16 @@ vorpal
   
   
 vorpal
-  .command('product ach <productname> <language>', "Lists product's achievements in specified language")
+  .command('product ach <productname> <language>', "Lists product's achievements in specified language.")
   .action(function(args, callback) {	
 	
 	functions.getProductAchievements(models, args.productname, args.language
 	, function(err, data) {
 		if (err) {console.log(err.errmsg)}
-		else {
-			vorpal.log(data);
+		else {			
+			for (var i in data) {
+				vorpal.log(data[i]);
+			}
 		}
 	}
 );
