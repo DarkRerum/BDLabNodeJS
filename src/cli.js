@@ -29,5 +29,21 @@ vorpal
   });
 
 vorpal
+  .command('product ach <productname> <language>', "Lists product's achievements in specified language")
+  .action(function(args, callback) {	
+	
+	functions.getProductAchievements(models, args.productname, args.language
+	, function(err, data) {
+		if (err) {console.log(err.errmsg)}
+		else {
+			vorpal.log(data);
+		}
+	}
+);
+		
+    callback();
+  });  
+  
+vorpal
   .delimiter('steam$')
   .show();
