@@ -11,8 +11,14 @@ module.exports = function(mongoose) {
 			required: true,
 			unique: true
 		},
-		username: String,
-		email: String,
+		username: {
+			type: String,
+			required: true
+		},
+		email: {
+			type: String,
+			required: true
+		},
 		phone: String,
 		language: {
 			type: String,
@@ -20,6 +26,7 @@ module.exports = function(mongoose) {
 		},
 		owned_products: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Products' }]
 	});
+	
 	
 	var Product = new Schema({
 		name: {
@@ -40,14 +47,18 @@ module.exports = function(mongoose) {
 	});
 	
 	
-	
 	var Order = new Schema({
-		owner : [{ type: mongoose.Schema.Types.ObjectId, ref: 'Accounts' }],
+		owner : {
+			type: mongoose.Schema.Types.ObjectId, 
+			ref: 'Accounts',
+			required: true,			
+		},
 		items : [{
 			product : {type: mongoose.Schema.Types.ObjectId, ref: 'Products'},
 			cur: String,
 			value: Number
-		}]
+		}],
+		purchase_date: Date
 	});
 	
 	var models = {

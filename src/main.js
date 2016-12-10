@@ -40,6 +40,9 @@ var testProd = new Product({
 			}
 		]
 });
+
+var testOrder = new Order({});
+
 /*testProd.save(function (err) {
 	if (err) {
 		console.log(err.errmsg); 
@@ -81,13 +84,28 @@ Product.findOne({name: 'Fallout: New Vegas'}).exec(function(err,doc) {
 
 Account
 .findOne({ name: 'rerum2' })
-.populate('owned_products description') // <--
-.exec(function (err, doc) {
-  if (err) {
-	  console.log(err);
-  }
-  else {
-	  //console.log(doc);
-	  console.log('Descriptions are %s', doc.owned_products[0].description);
-  }
-})
+//.populate('owned_products description') // <--
+.exec(function (err, acc) {
+	if (err) {console.log(err)}
+	else {
+		testOrder.owner = acc._id;
+		Product.findOne({name: 'Fallout: New Vegas'})
+		.exec(function(err,prod) {
+			if (err) {console.log(err)}
+			else {
+				testOrder.items = [{
+					product: prod._id, 
+					cur: 'rur', 
+					value: 400
+				}];
+				testOrder.save(function (err) {
+					if (err) {console.log(err)}
+					else {
+						console.log('success');
+					}
+				});
+			}
+		});
+	}
+});
+
