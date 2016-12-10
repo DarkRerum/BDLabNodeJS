@@ -1,10 +1,13 @@
+var mongoose = require('mongoose');
+//mongoose.Promise = global.Promise;
+
 function findProduct(models, productName, callback) {
 	models.Products.findOne({name: productName})
 	.exec(function (err, prod) {
 		if (err) {return callback(err, null)}
 		else {
 			if (prod === null) {
-				return callback({errmsg: 'There isn\'t such product'}, null);
+				return callback({errmsg: 'No such product'}, null);
 			}
 			return callback(null, prod);
 		}
@@ -18,7 +21,7 @@ function findAccount(models, accountName, callback) {
 		if (err) {return callback(err, null)}
 		else {
 			if (acc === null) {
-				return callback({errmsg: 'There isn\'t such account'}, null);
+				return callback({errmsg: 'No such account'}, null);
 			}
 			return callback(null, acc);
 		}
@@ -182,5 +185,45 @@ module.exports.unlockAchievement = function(models, accountName, productName, ac
 	});
 }
 
+module.exports.createOrder2 = function(models, accountName, callback) {
+	models.Accounts.findOne({ name: accountName }).exec(function(err, acc) {
+		if (err) {
+			return callback(err, null)
+		} else {
+		
+			if (acc === null) {
+				//return callback({errmsg: 'No such account'}, null);
+				return callback({errmsg: 'There isn\'t such account'}, null);
+			}
+		}
+		/*var newOrder = new Order({
+			owner: accountName
+		});*/
+		
+		
+	});
+}
+
+module.exports.createOrder = function(models, accountName, callback) {
+	findAccount(models, accountName, function(err, account) {
+		if (err) {
+			return callback(err, null)
+		}			
+		
+		var n = new models.Orders({
+			owner: accountName
+		});
+		
+		n.save(function (err, newdoc) {
+			console.log("doc is " + newdoc);
+			if (err) {
+				return callback(err, null); 
+			} else {
+				return callback(null, newdoc);
+			}
+		});
+				
+	});
+}
 
 module.exports.addNewAccount = function() {}

@@ -72,6 +72,21 @@ vorpal
     callback();
   });  
   
+vorpal
+.command('order create <accountname>', "Creates a new order for given account.")
+.action(function(args, callback) {	
+	
+	functions.createOrder(models, args.accountname, function(err, data) {
+		if (err) {
+			vorpal.log(err.errmsg)
+		}
+		else {			
+			vorpal.log("order successfully created");
+		}
+	});
+		
+    callback();
+  });   
   
 vorpal
   .command('product ach <productname> <language>', "Lists product's achievements in specified language.")
