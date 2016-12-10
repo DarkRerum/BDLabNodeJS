@@ -11,6 +11,37 @@ var Account = models.Accounts;
 var Product = models.Products;
 var Order = models.Orders;
 
+vorpal
+  .command('account ownedproducts <accountname>', "Lists account's owned product names")
+  .action(function(args, callback) {	
+	
+	functions.getOwnedProducts(models, args.accountname
+	, function(err, data) {
+		if (err) {console.log(err.errmsg)}
+		else {
+			vorpal.log(data);
+		}
+	}
+);
+		
+    callback();
+  });  
+
+vorpal
+  .command('product ach <productname> <language>', "Lists product's achievements in specified language")
+  .action(function(args, callback) {	
+	
+	functions.getProductAchievements(models, args.productname, args.language
+	, function(err, data) {
+		if (err) {console.log(err.errmsg)}
+		else {
+			vorpal.log(data);
+		}
+	}
+);
+		
+    callback();
+  });  
 
 vorpal
   .command('product price <productname> <currency>', 'Gets product price in provided currency')
@@ -28,21 +59,7 @@ vorpal
     callback();
   });
 
-vorpal
-  .command('product ach <productname> <language>', "Lists product's achievements in specified language")
-  .action(function(args, callback) {	
-	
-	functions.getProductAchievements(models, args.productname, args.language
-	, function(err, data) {
-		if (err) {console.log(err.errmsg)}
-		else {
-			vorpal.log(data);
-		}
-	}
-);
-		
-    callback();
-  });  
+
   
 vorpal
   .delimiter('steam$')
