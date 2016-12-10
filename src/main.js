@@ -17,7 +17,7 @@ var Order = models.Orders;
 		}
 	}
 );*/
-functions.getOwnedProducts(models, 'rerum2'
+functions.getOwnedProducts(models, 'hiso'
 	, function(err, data) {
 		if (err) {console.log(err.errmsg)}
 		else {
@@ -25,8 +25,9 @@ functions.getOwnedProducts(models, 'rerum2'
 		}
 	}
 );
-/*
-functions.getProductAchievements(models, 'Fallout: New Vegas', 'russian'
+
+
+/*functions.getProductAchievements(models, 'Skyrim', 'russian'
 	, function(err, names) {
 		if (err) {console.log(err.errmsg)}
 		else {
@@ -44,10 +45,10 @@ functions.getProductAchievements(models, 'Fallout: New Vegas', 'russian'
 
 
 /*var testAcc = new Account({
-	name: 'rerum2',
-	username: 'Acinonyx',
-	email: 't@example.com',
-	phone: "8 800 555 35 35",
+	name: 'hiso',
+	username: 'dsa',
+	email: 'rew@example.com',
+	phone: "99006664646",
 	//language: 'english',
 	//owned_products: ['Fallout: New Vegas']
 });
@@ -60,15 +61,15 @@ testAcc.save(function (err) {
 */
 
 /*var testProd = new Product({
-	name: 'Fallout: New Vegas',
+	name: 'Skyrim',
 	price: [
-			{cur: 'rur', value:  400},
-			{cur: 'eur', value: 15},
-			{cur: 'usd', value: 20}
+			{cur: 'rur', value:  350},
+			{cur: 'eur', value: 13},
+			{cur: 'usd', value: 17}
 		],
 		description: [
-			{lang: 'russian', text: 'эммм'},
-			{lang: 'english', text: 'hmmm'}
+			{lang: 'russian', text: 'описание'},
+			{lang: 'english', text: 'descrt'}
 			],
 		achievements: [
 			{
@@ -76,13 +77,6 @@ testAcc.save(function (err) {
 				translations: [
 					{lang: 'russian', name: 'старт', text: 'стартани'},
 					{lang: 'english', name: 'start', text: 'start game'}
-				]
-			},
-			{
-				id: 2,
-				translations: [
-					{lang: 'russian', name: 'финиш', text: 'финишируй'},
-					{lang: 'english', name: 'finish', text: 'finish game'}
 				]
 			}
 		]
@@ -94,6 +88,7 @@ testProd.save(function (err) {
 	}
 });
 */
+
 //var testOrder = new Order({});
 /*Product.findOne({name: 'Fallout: New Vegas'}).exec(function(err,doc) {
 	if (err) {
