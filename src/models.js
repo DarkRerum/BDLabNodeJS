@@ -1,6 +1,3 @@
-/*var mongoose = require('mongoose');*/
-
-
 module.exports = function(mongoose) {
 	var Schema = mongoose.Schema;
 	

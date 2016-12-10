@@ -9,14 +9,41 @@ var Account = models.Accounts;
 var Product = models.Products;
 var Order = models.Orders;
 
-functions.getProductPrice(models, 'Fallout: New Vegads', 'rur', function(err, price) {
+/*functions.getAccountData(models, 'rerum2'
+	, function(err, data) {
+		if (err) {console.log(err.errmsg)}
+		else {
+			console.log(data);
+		}
+	}
+);*/
+functions.getOwnedProducts(models, 'rerum2'
+	, function(err, data) {
+		if (err) {console.log(err.errmsg)}
+		else {
+			console.log(data);
+		}
+	}
+);
+/*
+functions.getProductAchievements(models, 'Fallout: New Vegas', 'russian'
+	, function(err, names) {
+		if (err) {console.log(err.errmsg)}
+		else {
+			console.log(names);
+		}
+	}
+);
+*/
+/*functions.getProductPrice(models, 'Fallout: New Vegas', 'ff', function(err, price) {
 	if (err) {console.log(err.errmsg)}
 	else {
 		console.log(price);
 	}
-});
-/*
-var testAcc = new Account({
+});*/
+
+
+/*var testAcc = new Account({
 	name: 'rerum2',
 	username: 'Acinonyx',
 	email: 't@example.com',
@@ -24,10 +51,15 @@ var testAcc = new Account({
 	//language: 'english',
 	//owned_products: ['Fallout: New Vegas']
 });
+
+testAcc.save(function (err) {
+	if (err) {
+		console.log(err.errmsg); 
+	}
+});
 */
 
-/*
-var testProd = new Product({
+/*var testProd = new Product({
 	name: 'Fallout: New Vegas',
 	price: [
 			{cur: 'rur', value:  400},
@@ -45,20 +77,25 @@ var testProd = new Product({
 					{lang: 'russian', name: 'старт', text: 'стартани'},
 					{lang: 'english', name: 'start', text: 'start game'}
 				]
+			},
+			{
+				id: 2,
+				translations: [
+					{lang: 'russian', name: 'финиш', text: 'финишируй'},
+					{lang: 'english', name: 'finish', text: 'finish game'}
+				]
 			}
 		]
 });
-*/
 
-//var testOrder = new Order({});
-
-/*testProd.save(function (err) {
+testProd.save(function (err) {
 	if (err) {
 		console.log(err.errmsg); 
 	}
-});*/
-/*
-Product.findOne({name: 'Fallout: New Vegas'}).exec(function(err,doc) {
+});
+*/
+//var testOrder = new Order({});
+/*Product.findOne({name: 'Fallout: New Vegas'}).exec(function(err,doc) {
 	if (err) {
 	  console.log(err);
 	}
@@ -80,8 +117,7 @@ Product.findOne({name: 'Fallout: New Vegas'}).exec(function(err,doc) {
 });
 */
 	
-/*Product
-.findOne({name: 'Fallout: New Vegas'})
+/*Product.findOne({name: 'Fallout: New Vegas'})
 .exec(function(err,doc) {
 	if (err) {
 		console.log(err);
@@ -91,8 +127,7 @@ Product.findOne({name: 'Fallout: New Vegas'}).exec(function(err,doc) {
 	}
 });*/
 
-/*Account
-.findOne({ name: 'rerum2' })
+/*Account.findOne({ name: 'rerum2' })
 //.populate('owned_products description') // <--
 .exec(function (err, acc) {
 	if (err) {console.log(err)}
