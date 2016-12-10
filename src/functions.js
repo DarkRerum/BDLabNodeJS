@@ -137,3 +137,50 @@ module.exports.getAccountAchievement = function(models, accountName, language, c
 		}
 	});
 }
+
+
+module.exports.unlockAchievement = function(models, accountName, productName, achName, callback) {
+	models.Accounts.findOne({name: accountName})
+	.populate('owned_products.product')
+	.exec(function (err, acc) {
+		if (err) {return callback(err, null)}
+		else {
+			if (acc === null) {
+				return callback({errmsg: 'There isn\'t such account'}, null);
+			}
+			var find = false;
+			for (var i = 0; i < acc.owned_products.length; i++) {
+				
+				if (acc.owned_products[i].product.name === productName) {
+					for (var j = 0; j < acc.owned_products[i].product.achievements.length; j++) {
+						
+						for (var k = 0; k < acc.owned_products[i].product.achievements[j].translations.length; k++) {
+							
+							if (acc.owned_products[i].product.achievements[j].translations[k].name === achName) {
+								find = true;
+								if (acc.owned_products[i].achievement_numbers.indexOf(j) > -1) {
+									return callback({errmsg: 'Achievement already unlocked'}, null);
+								}
+								else {
+									acc.owned_products[i].achievement_numbers.push(j);
+									models.Accounts.findByIdAndUpdate(acc._id, 
+										{ $set: { owned_products: acc.owned_products }}
+										, function (err, data) {
+									  if (err) {return callback(err, null)}
+									  return callback(null, "unlocked");
+									});
+								}
+							}
+						}
+					}
+				}
+			}
+			if (!find) {
+				return callback({errmsg: 'No such achievement'}, null);
+			}
+		}
+	});
+}
+
+
+module.exports.addNewAccount = function() {}
