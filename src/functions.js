@@ -81,13 +81,11 @@ module.exports.getOwnedProducts = function(models, accountName, callback) {
 			}
 			
 			var names = [];
-			var idx = 0;
-			//return callback(null, acc.owned_products[0].name);
-			for (i in acc.owned_products) {
+			
+			for (var i = 0; i < acc.owned_products.length; i++) {
 				names[i] = acc.owned_products[i].name;
-				idx++;
 			}
-			names[1] = 'dsa';
+			
 			if (names.length === 0) {
 				return callback({errmsg: 'This product has no owned products'}, null);
 			}
