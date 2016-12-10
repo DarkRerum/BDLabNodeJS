@@ -3,12 +3,19 @@ mongoose.Promise = global.Promise;
 mongoose.connect('mongodb://localhost/test');
 
 var models = require('./models')(mongoose);
+var functions = require('./functions');
 
 var Account = models.Accounts;
 var Product = models.Products;
 var Order = models.Orders;
 
-
+functions.getProductPrice(models, 'Fallout: New Vegads', 'rur', function(err, price) {
+	if (err) {console.log(err.errmsg)}
+	else {
+		console.log(price);
+	}
+});
+/*
 var testAcc = new Account({
 	name: 'rerum2',
 	username: 'Acinonyx',
@@ -17,8 +24,9 @@ var testAcc = new Account({
 	//language: 'english',
 	//owned_products: ['Fallout: New Vegas']
 });
+*/
 
-
+/*
 var testProd = new Product({
 	name: 'Fallout: New Vegas',
 	price: [
@@ -40,8 +48,9 @@ var testProd = new Product({
 			}
 		]
 });
+*/
 
-var testOrder = new Order({});
+//var testOrder = new Order({});
 
 /*testProd.save(function (err) {
 	if (err) {
@@ -82,7 +91,7 @@ Product.findOne({name: 'Fallout: New Vegas'}).exec(function(err,doc) {
 	}
 });*/
 
-Account
+/*Account
 .findOne({ name: 'rerum2' })
 //.populate('owned_products description') // <--
 .exec(function (err, acc) {
@@ -108,4 +117,5 @@ Account
 		});
 	}
 });
+*/
 
