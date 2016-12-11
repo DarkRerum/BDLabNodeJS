@@ -23,18 +23,20 @@ function findAccount(models, accountName, callback) {
 	redisClient.hexists("account_" + accountName, "id", function(err, reply) {
 		
 		if (reply === 1) {		
-			var cachedKeys = redisClient.hgetall("account_" + accountName);
-			var data = {			
-				_id: mongoose.Types.ObjectId(cachedKeys.id),
-				name: accountName,
-				email: cachedKeys.email,
-				language: cachedKeys.language,
-				username: cachedKeys.username
-			};
+			redisClient.hgetall("account_" + accountName, function(err, object) {
 			
-			console.log("redis: pulled account " + accountName + " from cache");
-			
-			return callback(null, data);
+				var data = {			
+					_id: mongoose.Types.ObjectId(object.id),
+					name: accountName,
+					email: object.email,
+					language: object.language,
+					username: object.username
+				};
+				
+				console.log("redis: pulled account " + accountName + " from cache");
+				
+				return callback(null, data);
+			});
 		} else {
 			console.log("redis: cache miss on " + accountName);
 	
@@ -48,11 +50,11 @@ function findAccount(models, accountName, callback) {
 					
 					console.log("accountname_ " + acc.name);
 					console.log("accountid_ " + acc._id);
-					redisClient.hset("account_" + acc.name, "id", acc._id.toString());
-					redisClient.hset("account_" + acc.name, "name", acc.name);
-					redisClient.hset("account_" + acc.name, "username", acc.username);
-					redisClient.hset("account_" + acc.name, "email", acc.email);
-					redisClient.hset("account_" + acc.name, "language", acc.language);
+					redisClient.hset("account_" + accountName, "id", acc._id.toString());
+					redisClient.hset("account_" + accountName, "name", acc.name);
+					redisClient.hset("account_" + accountName, "username", acc.username);
+					redisClient.hset("account_" + accountName, "email", acc.email);
+					redisClient.hset("account_" + accountName, "language", acc.language);
 					
 					console.log("redis: cached " + acc.name);
 					
