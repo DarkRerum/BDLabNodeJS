@@ -1,7 +1,10 @@
 var mongoose = require('mongoose');
 //mongoose.Promise = global.Promise;
 
-function findProduct(models, productName, callback) {
+var redis = require("redis"),
+redisClient = redis.createClient();
+
+function findProduct(models, productName, callback) {	
 	models.Products.findOne({name: productName})
 	.exec(function (err, prod) {
 		if (err) {return callback(err, null)}
@@ -9,25 +12,56 @@ function findProduct(models, productName, callback) {
 			if (prod === null) {
 				return callback({errmsg: 'No such product'}, null);
 			}
+			
 			return callback(null, prod);
 		}
 	});
 }
 
-
 function findAccount(models, accountName, callback) {
-	models.Accounts.findOne({name: accountName})
-	.exec(function (err, acc) {
-		if (err) {return callback(err, null)}
-		else {
-			if (acc === null) {
-				return callback({errmsg: 'No such account'}, null);
-			}
-			return callback(null, acc);
+	
+	redisClient.hexists("account_" + accountName, "id", function(err, reply) {
+		
+		if (reply === 1) {		
+			var cachedKeys = redisClient.hgetall("account_" + accountName);
+			var data = {			
+				_id: mongoose.Types.ObjectId(cachedKeys.id),
+				name: accountName,
+				email: cachedKeys.email,
+				language: cachedKeys.language,
+				username: cachedKeys.username
+			};
+			
+			console.log("redis: pulled account " + accountName + " from cache");
+			
+			return callback(null, data);
+		} else {
+			console.log("redis: cache miss on " + accountName);
+	
+			models.Accounts.findOne({name: accountName})
+			.exec(function (err, acc) {
+				if (err) {return callback(err, null)}
+				else {
+					if (acc === null) {
+						return callback({errmsg: 'No such account'}, null);
+					}			
+					
+					console.log("accountname_ " + acc.name);
+					console.log("accountid_ " + acc._id);
+					redisClient.hset("account_" + acc.name, "id", acc._id.toString());
+					redisClient.hset("account_" + acc.name, "name", acc.name);
+					redisClient.hset("account_" + acc.name, "username", acc.username);
+					redisClient.hset("account_" + acc.name, "email", acc.email);
+					redisClient.hset("account_" + acc.name, "language", acc.language);
+					
+					console.log("redis: cached " + acc.name);
+					
+					return callback(null, acc);
+				}
+			});
 		}
 	});
 }
-
 
 module.exports.getProductPrice = function(models, productName, currency, callback) {
 	findProduct(models, productName, function(err, prod) {
@@ -42,7 +76,6 @@ module.exports.getProductPrice = function(models, productName, currency, callbac
 		return callback({errmsg: 'This product has no price in this currency'}, null);
 	});
 }
-
 
 module.exports.getProductAchievements = function(models, productName, language, callback) {
 	findProduct(models, productName, function(err, prod) {
@@ -68,7 +101,6 @@ module.exports.getProductAchievements = function(models, productName, language, 
 		}
 	});
 }
-
 
 module.exports.getAccountData = findAccount;
 
