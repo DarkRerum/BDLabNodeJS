@@ -8,8 +8,39 @@ var functions = require('./functions');
 var Account = models.Accounts;
 var Product = models.Products;
 var Order = models.Orders;
+var orderId = new mongoose.mongo.ObjectId('584d116851dbc4203f3a79a3')
 
-functions.removePriceData(models, 'Skyrim', 'eur'
+functions.closeOrder(models, orderId
+	, function(err, da) {
+		if (err) {console.log(err.errmsg)}
+		else {
+			console.log(da);
+		}
+	}
+);
+
+
+/*functions.addItemToOrder(models, orderId, 'Skyrim', 'rur'
+	, function(err, da) {
+		if (err) {console.log(err.errmsg)}
+		else {
+			console.log(da);
+		}
+	}
+);*/	
+/*
+functions.removeItemFromOrder(models, orderId, 'Skyrim'
+	, function(err, da) {
+		if (err) {console.log(err.errmsg)}
+		else {
+			console.log(da);
+		}
+	}
+);	
+*/
+
+
+/*functions.createOrder(models, 'rerum2'
 	, function(err, data) {
 		if (err) {console.log(err.errmsg)}
 		else {
@@ -17,7 +48,16 @@ functions.removePriceData(models, 'Skyrim', 'eur'
 		}
 	}
 );
-
+*/
+/*functions.removePriceData(models, 'Skyrim', 'eur'
+	, function(err, data) {
+		if (err) {console.log(err.errmsg)}
+		else {
+			console.log(data);
+		}
+	}
+);
+*/
 /*functions.addPriceData(models, 'Skyrim', 'eur', 88
 	, function(err, data) {
 		if (err) {console.log(err.errmsg)}
