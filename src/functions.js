@@ -30,17 +30,27 @@ function findAccount(models, accountName, callback) {
 					name: accountName,
 					email: object.email,
 					language: object.language,
-					username: object.username
+					username: object.username,
+					owned_products: []
+					
 				};
 				
-				console.log("redis: pulled account " + accountName + " from cache");
+				redisClient.lrange("account_ownedproducts_" + accountName, 0, 99999999999, function(err, object) {								
 				
-				return callback(null, data);
+					console.log("redis: owned_products: " + object);					
+				
+					data.owned_products = object;
+				
+					console.log("redis: pulled account " + accountName + " from cache");
+				
+					return callback(null, data);
+				});
 			});
 		} else {
 			console.log("redis: cache miss on " + accountName);
 	
 			models.Accounts.findOne({name: accountName})
+			.populate('owned_products.product')
 			.exec(function (err, acc) {
 				if (err) {return callback(err, null)}
 				else {
@@ -55,6 +65,11 @@ function findAccount(models, accountName, callback) {
 					redisClient.hset("account_" + accountName, "username", acc.username);
 					redisClient.hset("account_" + accountName, "email", acc.email);
 					redisClient.hset("account_" + accountName, "language", acc.language);
+					
+					for (var i = 0; i < acc.owned_products.length; i++) {
+						//console.log(i + " " + acc.owned_products[i].product.name);
+						redisClient.lpush("account_ownedproducts_" + accountName, acc.owned_products[i].product.name);
+					}
 					
 					console.log("redis: cached " + acc.name);
 					
@@ -106,7 +121,6 @@ module.exports.getProductAchievements = function(models, productName, language, 
 
 module.exports.getAccountData = findAccount;
 
-
 module.exports.getOwnedProducts = function(models, accountName, callback) {
 	models.Accounts.findOne({name: accountName})
 	.populate('owned_products.product')
@@ -132,6 +146,35 @@ module.exports.getOwnedProducts = function(models, accountName, callback) {
 		}
 	});
 }
+
+
+//getOwnedProductsRedisless
+
+/*module.exports.getOwnedProducts = function(models, accountName, callback) {
+	models.Accounts.findOne({name: accountName})
+	.populate('owned_products.product')
+	.exec(function (err, acc) {
+		if (err) {return callback(err, null)}
+		else {
+			if (acc === null) {
+				return callback({errmsg: 'There isn\'t such account'}, null);
+			}
+			
+			var names = [];
+			
+			for (var i = 0; i < acc.owned_products.length; i++) {
+				names[i] = acc.owned_products[i].product.name;
+			}
+			
+			if (names.length === 0) {
+				return callback({errmsg: 'This product has no owned products'}, null);
+			}
+			else {
+				return callback(null, names);
+			}
+		}
+	});
+}*/
 
 
 module.exports.getAccountAchievement = function(models, accountName, language, callback) {
