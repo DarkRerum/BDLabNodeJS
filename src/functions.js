@@ -81,16 +81,28 @@ function findAccount(models, accountName, callback) {
 }
 
 module.exports.getProductPrice = function(models, productName, currency, callback) {
-	findProduct(models, productName, function(err, prod) {
-		if (err) {return callback(err, null)}
+	redisClient.hexists("product_" + productName + "_price_" + currency, "value", function(err, reply) {
 		
-		for (var i in prod.price) {
-			if (prod.price[i].cur === currency) {
-				return callback(null, prod.price[i].value);
-			}
+		if (reply === 1) {		
+			redisClient.hgetall("product_" + productName + "_price_" + currency, function(err, object) {
+				console.log("redis: pulled product " + productName + " price in " + currency + " from cache");
+				return callback(null, object.value)
+			});
+		} else {
+			console.log("redis: cache miss on " + productName + " price in " + currency);
+			findProduct(models, productName, function(err, prod) {
+				if (err) {return callback(err, null)}
+				
+				for (var i in prod.price) {
+					if (prod.price[i].cur === currency) {
+						redisClient.hset("product_" + productName + "_price_" + currency, "value", prod.price[i].value);
+						return callback(null, prod.price[i].value);
+					}
+				}
+				
+				return callback({errmsg: 'This product has no price in this currency'}, null);
+			});
 		}
-		
-		return callback({errmsg: 'This product has no price in this currency'}, null);
 	});
 }
 
@@ -114,6 +126,7 @@ module.exports.getProductAchievements = function(models, productName, language, 
 			return callback({errmsg: 'This product has no achievements in this language'}, null);
 		}
 		else {
+			
 			return callback(null, names);
 		}
 	});
@@ -436,6 +449,7 @@ module.exports.addPriceData = function(models, productName, currency, value, cal
 		for (var i in prod.price) {
 			if (prod.price[i].cur === currency) {
 				priceInCurrencyExist = true;
+				redisClient.hdel("product_" + productName + "_price_" + currency, "value");
 				prod.price[i].value = value;
 				break;
 			}
@@ -454,6 +468,7 @@ module.exports.addPriceData = function(models, productName, currency, value, cal
 }
 
 module.exports.removePriceData = function(models, productName, currency, callback) {
+	
 	findProduct(models, productName, function(err, prod) {
 		if (err) {return callback(err, null)}
 		
@@ -469,6 +484,7 @@ module.exports.removePriceData = function(models, productName, currency, callbac
 			{return callback({errmsg: 'No price in such currency'}, null)}
 		}
 		else {
+			redisClient.hdel("product_" + productName + "_price_" + currency, "value");
 			models.Products.findByIdAndUpdate(prod._id, 
 			{ $set: { price: prod.price }}
 			, function (err, data) {
