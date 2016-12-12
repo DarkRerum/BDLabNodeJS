@@ -35,7 +35,7 @@ function findAccount(models, accountName, callback) {
 					
 				};
 				
-				redisClient.lrange("account_ownedproducts_" + accountName, 0, 99999999999, function(err, object) {								
+				redisClient.lrange("account_ownedproducts_" + accountName, 0, -1, function(err, object) {								
 				
 					console.log("redis: owned_products: " + object);					
 				
@@ -108,16 +108,16 @@ module.exports.getProductPrice = function(models, productName, currency, callbac
 }
 
 module.exports.getProductAchievements = function(models, productName, language, callback) {
-	redisClient.hexists("product_" + productName + "_achievements_in_" + language, "names", function(err, reply) {
+	//redisClient.hexists("product_" + productName + "_achievements_in_" + language, "names", function(err, reply) {
 		
-		if (reply === 1) {
+	//	if (reply === 1) {
 			
-			redisClient.hgetall("product_" + productName + "_achievements_in_" + language, function(err, object) {
-				console.log("redis: pulled product " + productName + " achievements in " + language + " from cache");
-				return callback(null, object.names);
-			});
-			
-		} else {
+	//		redisClient.hgetall("product_" + productName + "_achievements_in_" + language, function(err, object) {
+				
+	redisClient.lrange("product_" + productName + "_achievements_in_" + language, 0, -1, function(err, data) {
+		//console.log(data);
+		//return callback(null, ['debug']);
+		if (err || data.length === 0) {
 			console.log("redis: cache miss on " + productName + " achievements in " + language);
 			findProduct(models, productName, function(err, prod) {
 				if (err) {return callback(err, null)}
@@ -138,13 +138,21 @@ module.exports.getProductAchievements = function(models, productName, language, 
 					return callback({errmsg: 'This product has no achievements in this language'}, null);
 				}
 				else {
-					redisClient.hset("product_" + productName + "_achievements_in_" + language, "names", names.toString());
-					console.log("redis: cached " + productName + " achievements in " + language);
-					return callback(null, names.toString());
+					for (var i = 0; i < names.length; i++) {
+						//console.log(i + " " + names[i]);
+						redisClient.lpush("product_" + productName + "_achievements_in_" + language, names[i]);
+					}
+					//redisClient.hset("product_" + productName + "_achievements_in_" + language, "names", names.toString());
+					//console.log("redis: cached " + productName + " achievements in " + language);
+					return callback(null, names);
 				}
 			});
+		} else {
+			console.log("redis: pulled product " + productName + " achievements in " + language + " from cache");
 	
+			return callback(null, data);
 		}
+		
 	});
 }
 
@@ -209,16 +217,11 @@ module.exports.getOwnedProducts = function(models, accountName, callback) {
 
 
 module.exports.getAccountAchievement = function(models, accountName, language, callback) {
-	redisClient.hexists("account_" + accountName + "_achievements_in_" + language, "names", function(err, reply) {
-		
-		if (reply === 1) {
+	redisClient.lrange("account_" + accountName + "_achievements_in_" + language, 0, -1, function(err, data) {
+		//console.log(data);
+		//return callback(null, ['debug']);
+		if (err || data.length === 0) {
 			
-			redisClient.hgetall("account_" + accountName + "_achievements_in_" + language, function(err, object) {
-				console.log("redis: pulled account " + accountName + " achievements in " + language + " from cache");
-				return callback(null, object.names);
-			});
-			
-		} else {
 			console.log("redis: cache miss on " + accountName + " achievements in " + language);
 			models.Accounts.findOne({name: accountName})
 			.populate('owned_products.product')
@@ -254,13 +257,21 @@ module.exports.getAccountAchievement = function(models, accountName, language, c
 						return callback({errmsg: 'This account has no achievements in such language'}, null);
 					}
 					else {
-						redisClient.hset("account_" + accountName + "_achievements_in_" + language, "names", names.toString());
+						for (var i = 0; i < names.length; i++) {
+							//console.log(i + " " + names[i]);
+							redisClient.lpush("account_" + accountName + "_achievements_in_" + language, names[i]);
+						}
+						//redisClient.hset("account_" + accountName + "_achievements_in_" + language, "names", names.toString());
 						console.log("redis: cached " + accountName + " achievements in " + language);
-						return callback(null, names.toString());
+						return callback(null, names);
 					}
 				}
 			});
 			
+		} else {
+			console.log("redis: pulled account " + accountName + " achievements in " + language + " from cache");
+	
+			return callback(null, data);	
 		}
 	});
 }
@@ -301,7 +312,7 @@ module.exports.unlockAchievement = function(models, accountName, productName, ac
 										if (err) return console.log(err);
 
 										  for(var i = 0, len = keys.length; i < len; i++) {
-											redisClient.hdel(keys[i], "names");
+											redisClient.del(keys[i]);
 										  }
 										});
 									  return callback(null, "unlocked");

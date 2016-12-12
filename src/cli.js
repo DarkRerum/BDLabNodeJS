@@ -96,9 +96,8 @@ vorpal
 	, function(err, data) {
 		if (err) {console.log(err.errmsg)}
 		else {
-			var response = data.split(',');
-			for (var i in response) {
-				vorpal.log(response[i]);
+			for (var i = 0; i < data.length; i++) {
+				vorpal.log(data[i]);
 			}
 		}
 	}
@@ -131,9 +130,8 @@ vorpal
 		, function(err, data) {
 			if (err) {console.log(err.errmsg)}
 			else {
-				var response = data.split(',');
-				for (var i in response) {
-					vorpal.log(response[i]);
+				for (var i = 0; i < data.length; i++) {
+					vorpal.log(data[i]);
 				}
 			}
 		}
