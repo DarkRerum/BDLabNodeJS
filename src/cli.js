@@ -95,9 +95,10 @@ vorpal
 	functions.getProductAchievements(models, args.productname, args.language
 	, function(err, data) {
 		if (err) {console.log(err.errmsg)}
-		else {			
-			for (var i in data) {
-				vorpal.log(data[i]);
+		else {
+			var response = data.split(',');
+			for (var i in response) {
+				vorpal.log(response[i]);
 			}
 		}
 	}
