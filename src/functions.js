@@ -135,15 +135,16 @@ module.exports.getProductAchievements = function(models, productName, language, 
 module.exports.getAccountData = findAccount;
 
 module.exports.getOwnedProducts = function(models, accountName, callback) {
-	models.Accounts.findOne({name: accountName})
-	.populate('owned_products.product')
-	.exec(function (err, acc) {
-		if (err) {return callback(err, null)}
-		else {
-			if (acc === null) {
-				return callback({errmsg: 'There isn\'t such account'}, null);
-			}
-			
+	findAccount(models, accountName, function(err, acc) {
+		if (err) {
+			return callback(err, null);
+		}
+		
+		if(!acc.owned_products) {
+			return callback({errmsg: "No owned products on this account"}, null);
+		}
+		
+		if(acc.owned_products[0]._id) {
 			var names = [];
 			
 			for (var i = 0; i < acc.owned_products.length; i++) {
@@ -151,12 +152,13 @@ module.exports.getOwnedProducts = function(models, accountName, callback) {
 			}
 			
 			if (names.length === 0) {
-				return callback({errmsg: 'This product has no owned products'}, null);
+				return callback({errmsg: 'No owned products on this account'}, null);
 			}
 			else {
 				return callback(null, names);
 			}
-		}
+		}			
+		return callback(null, acc.owned_products);
 	});
 }
 
@@ -395,7 +397,7 @@ module.exports.closeOrder = function(models, orderId, callback) {
 		if (err) {return callback(err, null)}
 		if (order === null) {return callback({errmsg: 'No such order'}, null)}
 		if (typeof order.purchase_date != 'undefined') {
-			return callback({errmsg: 'Order has already closed'}, null);
+			return callback({errmsg: 'Order has already been closed'}, null);
 		}
 		
 		for (var i = 0; i < order.items.length; i++) {
@@ -404,6 +406,10 @@ module.exports.closeOrder = function(models, orderId, callback) {
 				product: order.items[i].product
 			});
 		}
+		
+		//invalidate account cache
+		console.log("--REDIS: removing cache for " + order.owner.name);
+		redisClient.del("account_" + order.owner.name);
 		
 		models.Accounts.findByIdAndUpdate(order.owner 
 			,{ $set: { owned_products: order.owner.owned_products }}

@@ -42,7 +42,7 @@ vorpal
 	, function(err, data) {
 		if (err) {vorpal.log(err.errmsg)}
 		else {
-			for (var i in data) {
+			for (var i = 0; i < data.length; i++) {
 				vorpal.log(data[i]);
 			}			
 		}
