@@ -478,7 +478,9 @@ module.exports.getAccountOrders = function(models, accountName, callback) {
 			for (var i = 0; i < order.length; i++) {
 				indexes[i] = order[i]._id;
 			}
-			
+			if (indexes.length === 0) {
+				return callback({errmsg: 'Account has no orders'});
+			}
 			return callback(null, indexes);
 		})
 	});
